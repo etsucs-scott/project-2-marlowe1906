@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="WarGame.Cli/WarGame.Cli.csproj" />
+  <Project Path="WarGame.Core/WarGame.Core.csproj" Id="2107918d-c296-4286-b6c6-2a436beb7b97" />
+</Solution>
