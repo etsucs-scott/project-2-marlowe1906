@@ -3,4 +3,7 @@ using WarGame.Core;
 
 Deck deck = new Deck();
 
-deck.Generate();
+foreach (string value in deck.ShuffledDeck())
+{
+    Console.WriteLine(value);
+}
