@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace WarGame.Core
@@ -54,7 +56,10 @@ namespace WarGame.Core
 
             return ShuffledDeck;
         }
-                
+        public string Pop(Stack<string> deck)
+        {
+            return deck.Pop();
+        }
 
     }
 }
