@@ -13,7 +13,7 @@ namespace WarGame.Core
                 AllHands.TryGetValue(names[0], out Queue<string> P1cards);
                 AllHands.TryGetValue(names[1], out Queue<string> P2cards);
 
-                Played.Add(round, P1cards.Dequeue() + P2cards.Dequeue());
+                Played.Add(round, P1cards.Dequeue() + "," + P2cards.Dequeue());
             }
             else if (Players == 3)
             {
@@ -21,7 +21,7 @@ namespace WarGame.Core
                 AllHands.TryGetValue(names[1], out Queue<string> P2cards);
                 AllHands.TryGetValue(names[2], out Queue<string> P3cards);
 
-                Played.Add(round, P1cards.Dequeue() + P2cards.Dequeue() + P3cards.Dequeue());
+                Played.Add(round, P1cards.Dequeue() + "," + P2cards.Dequeue() + "," + P3cards.Dequeue());
             }
             else if (Players == 4)
             {
@@ -30,7 +30,7 @@ namespace WarGame.Core
                 AllHands.TryGetValue(names[2], out Queue<string> P3cards);
                 AllHands.TryGetValue(names[3], out Queue<string> P4cards);
 
-                Played.Add(round, P1cards.Dequeue() + P2cards.Dequeue() + P3cards.Dequeue() + P4cards.Dequeue());
+                Played.Add(round, P1cards.Dequeue() + "," + P2cards.Dequeue() + "," + P3cards.Dequeue() + "," + P4cards.Dequeue());
             }
             else
             {
