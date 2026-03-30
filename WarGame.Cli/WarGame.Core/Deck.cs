@@ -8,8 +8,41 @@ namespace WarGame.Core
 {
     public class Deck
     {
-        Cards card = new Cards();
+        public Stack<Cards> cards;
+        public Deck()
+        {
+            var list = new List<Cards>();
 
+            foreach (var suit in Cards.Suits)
+                foreach (var rank in Cards.Values)
+                    list.Add(new Cards(rank, suit));
+
+            cards = new Stack<Cards>(list);
+        }
+
+        public Cards Deal()
+        {
+            if (cards.Count == 0)
+                throw new InvalidOperationException("Deck is empty.");
+            return cards.Pop();
+        }
+
+        public int Count => cards.Count;
+        public bool IsEmpty =>  cards.Count == 0;
+
+        private void Shuffle(List<Cards> cards)
+        {
+            var rng = new Random();
+            for (int i = cards.Count - 1; i > 0; i--)
+            {
+                int j = rng.Next(i + 1);
+                var temp = cards[i];
+                cards[i] = cards[j];
+                cards[j] = temp;
+            }
+        }
+
+        /*
         public Stack<string> deck = new Stack<string>();
 
         public void OrderedDeck()
@@ -60,6 +93,7 @@ namespace WarGame.Core
         {
             return deck.Pop();
         }
+        */
 
     }
 }

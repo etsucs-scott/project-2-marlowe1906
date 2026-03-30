@@ -2,6 +2,12 @@
 using WarGame.Core;
 
 Run run = new Run();
+Deck deck = new Deck();
 
-run.Execute();
+foreach (var card in deck.cards)
+{
+    Console.WriteLine(deck.Deal());
+}
+
+
 

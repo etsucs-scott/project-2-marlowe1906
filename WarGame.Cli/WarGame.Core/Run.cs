@@ -19,7 +19,7 @@ namespace WarGame.Core
                 Console.Write("What is the name of player " + (j + 1) + "? ");
                 names.Add(Console.ReadLine());
             }
-
+            /*
             Dictionary<string, Queue<string>> AllHands = hands.PlayerHand(players, names);
             Dictionary<int, string> Played = new Dictionary<int, string>();
             HashSet<string> seenStates = new HashSet<string>();
@@ -116,6 +116,8 @@ namespace WarGame.Core
                 "A" => 14,
                 _ => int.Parse(card)
             };
+        }
+            */
         }
     }
 }

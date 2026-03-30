@@ -5,7 +5,7 @@ namespace WarGame.Core
     public class PlayerHands
     {
         public Dictionary<string, Queue<string>> AllHands = new Dictionary<string, Queue<string>>();
-
+        /*
         public Dictionary<string, Queue<string>> PlayerHand(int Players, List<string> names)
         {
             Deck Deck = new Deck();
@@ -32,5 +32,6 @@ namespace WarGame.Core
 
             return AllHands;
         }
+        */
     }
 }
