@@ -1,37 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-namespace WarGame.Core
+﻿namespace WarGame.Core
 {
     public class PlayerHands
     {
-        public Dictionary<string, Queue<string>> AllHands = new Dictionary<string, Queue<string>>();
-        /*
-        public Dictionary<string, Queue<string>> PlayerHand(int Players, List<string> names)
+        public Dictionary<string, Hand> AllHands = new Dictionary<string, Hand>();
+
+        public Dictionary<string, Hand> PlayerHand(int players, List<string> names)
         {
-            Deck Deck = new Deck();
-            Hand Hand = new Hand();
-            Stack<string> deck = Deck.ShuffledDeck();
+            Deck deck = new Deck();
+            List<Cards> cards = new List<Cards>(deck.cards);
 
-            // Deal once and grab the result
-            var dealt = Hand.PlayerHands(Players, deck);
+            Stack<Cards> shuffled = new Stack<Cards>(deck.Shuffle(cards));
 
-            if (Players >= 2)
+            // Initialize a Hand for each player
+            for (int i = 0; i < players; i++)
+                AllHands.Add(names[i], new Hand());
+
+            // Round-robin deal
+            int index = 0;
+            while (shuffled.Count > 0)
             {
-                AllHands.Add(names[0], dealt.Player1);
-                AllHands.Add(names[1], dealt.Player2);
+                Cards card = shuffled.Pop();
+                AllHands[names[index % players]].AddCard(card);  
+                index++;
             }
-
-            if (Players >= 3)
-                AllHands.Add(names[2], dealt.Player3);
-
-            if (Players >= 4)
-                AllHands.Add(names[3], dealt.Player4);
-
-            if (Players < 2 || Players > 4)
-                Console.WriteLine("Please enter a valid amount of players");
 
             return AllHands;
         }
-        */
     }
 }

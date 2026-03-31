@@ -1,87 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Markup;
-
-namespace WarGame.Core
+﻿namespace WarGame.Core
 {
     public class Hand
     {
-        
+        // Required: Queue<Card> to hold the player's cards
+        private Queue<Cards> _cards = new Queue<Cards>();
 
-        public Queue<string> Player1 = new Queue<string>();
-        public Queue<string> Player2 = new Queue<string>();
-        public Queue<string> Player3 = new Queue<string>();
-        public Queue<string> Player4 = new Queue<string>();
+        public int Count => _cards.Count;
+        public bool IsEmpty => _cards.Count == 0;
 
-        public (Queue<string> Player1, Queue<string> Player2, Queue<string> Player3, Queue<string> Player4) PlayerHands(int Players, Stack<string> deck)
-        {
-            int PlaceHolder = 0;
-            while (deck.Count > 0)
-            {
-                if (Players == 2)
-                {
-                    if (PlaceHolder == 0 && deck.Count > 0)
-                    {
-                        Player1.Enqueue(deck.Pop());
-                        PlaceHolder = 1;
-                    }
-                    else if (PlaceHolder == 1 && deck.Count > 0)
-                    {
-                        Player2.Enqueue(deck.Pop());
-                        PlaceHolder = 0;
-                    }
-                }
-                else if (Players == 3)
-                {
-                    if (PlaceHolder == 0 && deck.Count > 0)
-                    {
-                        Player1.Enqueue(deck.Pop());
-                        PlaceHolder = 1;
-                    }
-                    else if (PlaceHolder == 1 && deck.Count > 0)
-                    {
-                        Player2.Enqueue(deck.Pop());
-                        PlaceHolder = 2;
-                    }
-                    else if (PlaceHolder == 2 && deck.Count > 0)
-                    {
-                        Player3.Enqueue(deck.Pop());
-                        PlaceHolder = 0;
-                    }
-                }
-                else if (Players == 4)
-                {
-                    if (PlaceHolder == 0 && deck.Count > 0)
-                    {
-                        Player1.Enqueue(deck.Pop());
-                        PlaceHolder = 1;
-                    }
-                    else if (PlaceHolder == 1 && deck.Count > 0)
-                    {
-                        Player2.Enqueue(deck.Pop());
-                        PlaceHolder = 2;
-                    }
-                    else if (PlaceHolder == 2 && deck.Count > 0)
-                    {
-                        Player3.Enqueue(deck.Pop());
-                        PlaceHolder = 3;
-                    }
-                    else if (PlaceHolder == 3 && deck.Count > 0)
-                    {
-                        Player4.Enqueue(deck.Pop());
-                        PlaceHolder = 0;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Please input a valid amount of players");
-                }
-            }
-            
+        // Adds a card to the back of the hand (used when receiving won cards).
 
-            return (Player1, Player2, Player3, Player4);
-        }
+        public void AddCard(Cards card) => _cards.Enqueue(card);
 
+  
+        // Plays the front card from the hand.
+        public Cards Play() => _cards.Dequeue();
+
+        // Returns true if the player has at least one card to play.
+        public bool CanPlay() => _cards.Count > 0;
     }
 }

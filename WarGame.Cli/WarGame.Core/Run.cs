@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 namespace WarGame.Core
 {
     public class Run
@@ -8,7 +9,7 @@ namespace WarGame.Core
         public void Execute()
         {
             PlayerHands hands = new PlayerHands();
-            PlayedCards cards = new PlayedCards();
+            PlayedCards playedCards = new PlayedCards();
             List<string> names = new List<string>();
 
             Console.Write("How many players do you want to run (2,3,4)? ");
@@ -19,105 +20,102 @@ namespace WarGame.Core
                 Console.Write("What is the name of player " + (j + 1) + "? ");
                 names.Add(Console.ReadLine());
             }
-            /*
-            Dictionary<string, Queue<string>> AllHands = hands.PlayerHand(players, names);
-            Dictionary<int, string> Played = new Dictionary<int, string>();
-            HashSet<string> seenStates = new HashSet<string>();
 
-            int i = 0;
+            Dictionary<string, Hand> allHands = hands.PlayerHand(players, names);
+
             int rounds = 1;
 
-            while (AllHands.Values.All(q => q.Count > 0) && rounds < 10000)
+            while (rounds <= 10000)
             {
-                // Detect infinite loop
-                string state = string.Join("|", names.Select(n => string.Join(",", AllHands[n])));
-                if (seenStates.Contains(state))
-                {
-                    Console.WriteLine("Game has entered an infinite loop — declaring a draw!");
-                    return;
-                }
-                seenStates.Add(state);
-
-                Console.WriteLine("\n--- Round " + rounds + " ---");
-                foreach (string name in names)
-                    Console.WriteLine(name + " has " + AllHands[name].Count + " cards");
-
-                cards.Collect(players, AllHands, i, names, Played);
-
-                string[] InPlay = Played[i].Split(",");
-
-                // Convert and display played cards
-                int[] cardValues = new int[players];
-                for (int p = 0; p < players; p++)
-                {
-                    cardValues[p] = ConvertCard(InPlay[p]);
-                    Console.WriteLine(names[p] + " played: " + InPlay[p]);
-                }
-
-                // Find the winner(s)
-                int maxValue = cardValues.Max();
-                List<int> winners = new List<int>();
-                for (int p = 0; p < players; p++)
-                {
-                    if (cardValues[p] == maxValue)
-                        winners.Add(p);
-                }
-
-                if (winners.Count == 1)
-                {
-                    int winnerIndex = winners[0];
-                    Console.WriteLine(names[winnerIndex] + " wins this round!");
-
-                    // Winner gets all played cards
-                    foreach (string card in InPlay)
-                        AllHands[names[winnerIndex]].Enqueue(card);
-                }
-                else
-                {
-                    // Tie — tied players get their card back, others lose theirs
-                    Console.WriteLine("Tie between: " + string.Join(", ", winners.Select(w => names[w])));
-                    foreach (int w in winners)
-                        AllHands[names[w]].Enqueue(InPlay[w]);
-                }
-
-                // Eliminate players with no cards
-                List<string> eliminated = names.Where(n => AllHands[n].Count == 0).ToList();
+                // Eliminate players with no cards before each round
+                List<string> eliminated = names.Where(n => allHands[n].IsEmpty).ToList();
                 foreach (string name in eliminated)
                 {
                     Console.WriteLine(name + " has been eliminated!");
                     names.Remove(name);
-                    AllHands.Remove(name);
-                    players--;
+                    allHands.Remove(name);
                 }
 
-                // Check if only one player remains
                 if (names.Count == 1)
                 {
                     Console.WriteLine("\n" + names[0] + " wins the game!");
                     return;
                 }
 
+                Console.WriteLine("\n--- Round " + rounds + " ---");
+                foreach (string name in names)
+                    Console.WriteLine(name + " has " + allHands[name].Count + " cards");
+
+                // Play a round (handles ties recursively with shared pot)
+                string winner = PlayRound(names, allHands, playedCards);
+
+                if (winner != null)
+                    Console.WriteLine(winner + " wins the round and collects the pot!");
+
                 rounds++;
-                i++;
             }
 
-            // Fallback — shouldn't normally reach here
-            string winner = AllHands.OrderByDescending(kv => kv.Value.Count).First().Key;
-            Console.WriteLine("\n" + winner + " wins the game with " + AllHands[winner].Count + " cards!");
+            // Round cap reached — player with most cards wins
+            string gameWinner = allHands.OrderByDescending(kv => kv.Value.Count).First().Key;
+            int topCount = allHands[gameWinner].Count;
+            var leaders = allHands.Where(kv => kv.Value.Count == topCount).Select(kv => kv.Key).ToList();
+
+            if (leaders.Count == 1)
+                Console.WriteLine("\n" + gameWinner + " wins with " + topCount + " cards!");
+            else
+                Console.WriteLine("\nDraw! Leaders: " + string.Join(", ", leaders));
         }
 
-        private int ConvertCard(string card)
+        private string PlayRound(List<string> names, Dictionary<string, Hand> allHands, PlayedCards playedCards)
         {
-            return card switch
+            Dictionary<string, Cards> played = playedCards.Collect(allHands);
+
+            // Print what each player played
+            foreach (var (name, card) in played)
+                Console.WriteLine(name + " played: " + card);
+
+            // Find the highest rank among played cards
+            var highRank = played.Values.Max(c => c.Value);
+            List<string> winners = played.Where(kv => kv.Value.Value == highRank)
+                                         .Select(kv => kv.Key)
+                                         .ToList();
+
+            if (winners.Count == 1)
             {
-                "J" => 11,  
-                "Q" => 12,
-                "K" => 13,
-                "A" => 14,
-                _ => int.Parse(card)
-            };
-        }
-            */
+                // Clear winner — award entire pot to them
+                playedCards.AwardPot(winners[0], allHands);
+                return winners[0];
+            }
+
+            // Tie — pot stays, only tied players continue into tiebreaker
+            Console.WriteLine("Tie between: " + string.Join(", ", winners));
+            Console.WriteLine("Pot has " + playedCards.Pot.Count + " cards — playing tiebreaker!");
+
+            // Eliminate tied players who have no cards left for the tiebreaker
+            List<string> canPlay = winners.Where(n => allHands[n].CanPlay()).ToList();
+            List<string> cannotPlay = winners.Except(canPlay).ToList();
+            foreach (string name in cannotPlay)
+            {
+                Console.WriteLine(name + " cannot play a tiebreaker and is eliminated!");
+                names.Remove(name);
+                allHands.Remove(name);
+            }
+
+            if (canPlay.Count == 1)
+            {
+                // Only one tied player left — they win the pot
+                playedCards.AwardPot(canPlay[0], allHands);
+                return canPlay[0];
+            }
+
+            if (canPlay.Count > 1)
+            {
+                // Recurse — tiebreaker round among only the tied players
+                return PlayRound(canPlay, allHands, playedCards);
+            }
+
+            // Everyone eliminated during tie — pot is abandoned
+            return null;
         }
     }
 }
