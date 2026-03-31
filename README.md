@@ -1,43 +1,41 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/hZIAsDPT)
-# CSCI 1260 — Project
-
-## Project Instructions
-All project requirements, grading criteria, and submission details are provided on **D2L**.  
-Refer to D2L as the *authoritative source* for this assignment.
-
-This repository is intentionally minimal. You are responsible for:
-- Creating the solution and projects
-- Designing the class structure
-- Implementing the required functionality
-
----
-
-## Getting Started (CLI)
-
-You may use **Visual Studio**, **VS Code**, or the **terminal**.
-
-### Create a solution
-```bash
-dotnet new sln -n ProjectName
-```
-
-### Create a project (example: console app)
-```bash
-dotnet new console -n ProjectName.App
-```
-
-### Add the project to the solution
-```bash
-dotnet sln add ProjectName.App
-```
-
-### Build and run
-```bash
+Setup Instructions
+1. Clone the Repository
+git clone https://github.com/your-username/WarGame.git
+cd WarGame
+2. Build the Project
 dotnet build
-dotnet run --project ProjectName.App
-```
+3. Run the Program
+dotnet run
 
-## Notes
-- Commit early and commit often.
-- Your repository history is part of your submission.
-- Update this README with build/run instructions specific to your project.
+How to Use
+Enter the number of players (2–4)
+Enter each player’s name
+Each round:
+Players draw one card
+Highest card wins
+Winner collects all played cards
+Players are eliminated when they run out of cards
+Last remaining player wins
+
+Game Features
+Supports 2–4 players
+Automatically shuffles and deals cards
+Tracks rounds and player card counts
+Detects infinite loops and declares a draw
+Face cards are valued as:
+J = 11
+Q = 12
+K = 13
+A = 14
+
+Example Output
+How many players do you want to run (2,3,4)? 2
+What is the name of player 1? Alice
+What is the name of player 2? Bob
+
+--- Round 1 ---
+Alice has 26 cards
+Bob has 26 cards
+Alice played: 9
+Bob played: K
+Bob wins this round!
